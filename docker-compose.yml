@@ -1,0 +1,33 @@
+version: "3.9"
+services:
+  t3-test-app:
+    platform: "linux/amd64"
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        NEXT_PUBLIC_CLIENTVAR: "clientvar"
+    working_dir: /app
+    ports:
+      - 3000:3000
+    image: t3-app
+    environment:
+      - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/t3-test?schema=public
+      # ONLY FOR TEST
+      - NEXTAUTH_SECRET=dnupaXm2lOB00SJpuZbN2wuKplbjC4fUq5mOnZIqwkw=
+      - NEXTAUTH_URL=http://localhost:3000
+  postgres:
+    image: postgres:15.3
+    container_name: postgres
+    hostname: postgres
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: t3-test
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    restart: unless-stopped
+volumes:
+  postgres-data:
